@@ -1,0 +1,21 @@
+{
+    "name": "fizzday/fizzdb",
+    "description": "a mini php router with laravel like, is using for Fizzday php framework, also it can using for any other php framework which built with composer or according the psr standard",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "fizz",
+            "email": "864759073@qq.com"
+        }
+    ],
+    "require": {
+        "fizzday/fizzhelper": "dev-master",
+        "fizzday/fizztraits": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fizzday\\FizzDB\\": "src/"
+        }
+    }
+}
