@@ -6,12 +6,11 @@
     "authors": [
         {
             "name": "fizz",
-            "email": "864759073@qq.com"
+            "email": "fizzday@yeah.net"
         }
     ],
     "require": {
-        "fizzday/fizzhelper": "dev-master",
-        "fizzday/fizztraits": "dev-master"
+        "fizzday/fizzhelper": "dev-master"
     },
     "autoload": {
         "psr-4": {
