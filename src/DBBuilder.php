@@ -7,53 +7,21 @@ use Exception;
 
 class DBBuilder implements DBInterface
 {
-    /**
-     * 配置
-     * @var
-     */
-    protected $config;
-
-    /**
-     * pdo链接
-     * @var
-     */
-    protected $pdo;
-
-    /**
-     * 执行sql的日志记录
-     * @var
-     */
-    protected $sqlLogs;
-
-    /**
-     * 表名
-     * @var
-     */
-    protected $table;
-
-    protected $join;
-
-    protected $data;
-    protected $dataRaw;
-
-    /**
-     * 字段
-     * @var
-     */
-    protected $fields;
-
-    /**
-     * 绑定参数
-     * @var
-     */
-    protected $bindValues;
-
-    protected $wheres;
-    protected $group;
-    protected $having;
-    protected $order;
-    protected $limit;
-    protected $offset;
+    protected $config;  // 数据库配置
+    protected $pdo; // pdo链接
+    protected $sqlLogs; // 执行sql的日志记录
+    protected $table;   // 当前操作的表名
+    protected $join;    // 联表
+    protected $data;    // 更新或增加的数据, 键值对数组
+    protected $dataRaw; // 更新或增加的数据, sql语句
+    protected $fields;  // 查询字段, 数组
+    protected $bindValues;  // 绑定参数, 键值对数组
+    protected $wheres;  // where条件, 不同情况, 例如: compact('type', 'column', 'operator', 'value', 'boolean');
+    protected $group;   // 聚合
+    protected $having;  // 聚合
+    protected $order;   // 排序, id asc
+    protected $limit;   // 查询数
+    protected $offset;  // 偏移量
 
     protected $return = [
         're'=>'',
@@ -285,8 +253,7 @@ class DBBuilder implements DBInterface
     public function get($re = 'get', $getOne = false)
     {
         $this->return['re'] = $re;
-//        echo $re;
-//        var_dump($getOne);die;
+
         return $this->query('', [], $getOne);
     }
 
@@ -482,7 +449,6 @@ class DBBuilder implements DBInterface
      */
     public function buildSql($oper = 'select')
     {
-
         $regx = [];
         $regx['table'] = $this->getTable();
         // update
