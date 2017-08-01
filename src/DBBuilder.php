@@ -742,9 +742,11 @@ class DBBuilder implements DBInterface
      * @param $int
      * @return $this
      */
-    public function limit($int)
+    public function limit($limit, $offset=0)
     {
-        $this->limit = $int;
+        $this->limit = $limit;
+
+        if ($offset) $this->offset($offset);
 
         return $this;
     }
@@ -754,9 +756,9 @@ class DBBuilder implements DBInterface
      * @param $int
      * @return $this
      */
-    public function offset($int)
+    public function offset($offset)
     {
-        $this->offset = $int;
+        $this->offset = $offset;
 
         return $this;
     }
