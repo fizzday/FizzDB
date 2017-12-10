@@ -5,7 +5,7 @@ namespace Fizzday\FizzDB;
 use PDO;
 use Exception;
 
-class DBBuilder implements DBInterface
+class DBBuilder
 {
     protected $config;  // 数据库配置
     protected $pdo; // pdo链接
