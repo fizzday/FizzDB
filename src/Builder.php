@@ -5,10 +5,10 @@ namespace Fizzday\FizzDB;
 use PDO;
 use Exception;
 
-class DBBuilder
+class Builder
 {
     protected $config;  // 数据库配置
-    protected $pdo; // pdo链接
+    protected $pdo;     // pdo链接
     protected $sqlLogs; // 执行sql的日志记录
     protected $table;   // 当前操作的表名
     protected $join;    // 联表
@@ -20,33 +20,33 @@ class DBBuilder
     protected $group;   // 聚合
     protected $having;  // 聚合
     protected $order;   // 排序, id asc
-    protected $limit;   // 查询数
-    protected $offset;  // 偏移量
+    protected $limit = 1000;   // 查询数
+    protected $offset = 0;  // 偏移量
 
     protected $return = [
-        're'=>'',
-        'val'=>''
+        're' => '',
+        'val' => ''
     ];
 
-    public function reset()
-    {
-        $this->table = null;
-        $this->join = null;
-        $this->data = null;
-        $this->dataRaw = null;
-        $this->fields = null;
-        $this->bindValues = null;
-        $this->wheres = null;
-        $this->group = null;
-        $this->having = null;
-        $this->order = null;
-        $this->limit = null;
-        $this->offset = null;
-        $this->return = [
-            're'=>'',
-            'val'=>''
-        ];
-    }
+//    public function reset()
+//    {
+//        $this->table = null;
+//        $this->join = null;
+//        $this->data = null;
+//        $this->dataRaw = null;
+//        $this->fields = null;
+//        $this->bindValues = null;
+//        $this->wheres = null;
+//        $this->group = null;
+//        $this->having = null;
+//        $this->order = null;
+//        $this->limit = null;
+//        $this->offset = null;
+//        $this->return = [
+//            're' => '',
+//            'val' => ''
+//        ];
+//    }
 
     public function connection($con = '')
     {
@@ -144,6 +144,9 @@ class DBBuilder
 
         if ($param) $this->bindValues = array_merge((array)$this->bindValues, $param);
 
+        if ($returnOne) $sql .= ' limit 1';
+//        else $sql .= ' limit 10';
+
         $stmt = $this->getPdo('read')->prepare($sql);
         $res = $stmt->execute($this->bindValues);
 
@@ -153,7 +156,7 @@ class DBBuilder
             else $res = $stmt->fetchAll(PDO::FETCH_OBJ);
         }
 
-        $this->reset();
+//        $this->reset();
 
         return $res ?: null;
     }
@@ -189,7 +192,7 @@ class DBBuilder
 
         if ($res && ($flag == 'insert')) $insertId = $this->getPdo('write')->lastInsertId();
 
-        $this->reset();
+//        $this->reset();
 
         if ($res && ($flag == 'insert')) return $insertId;
 
@@ -269,7 +272,7 @@ class DBBuilder
         return $res->$field;
     }
 
-    public function chunks($num=100)
+    public function chunks($num = 100)
     {
         // 查询对应的数据量是否已经小于既定的offset
         $count = $this->count();
@@ -285,7 +288,7 @@ class DBBuilder
         return $data;
     }
 
-    public function chunk($num=100, callable $fun)
+    public function chunk($num = 100, callable $fun)
     {
         $page = floor(((int)$this->offset) / $num);
         do {
@@ -310,7 +313,9 @@ class DBBuilder
 //        call_user_func($fun, $data);
     }
 
-    public function find($id) {    }
+    public function find($id)
+    {
+    }
 
     public function count()
     {
@@ -360,7 +365,7 @@ class DBBuilder
 
     public function join($table, $one, $operator = null, $two = null, $type = 'inner')
     {
-        $this->join[] = "$type join ". $this->getPrefix() . $table . " on $one $operator $two";
+        $this->join[] = "$type join " . $this->getPrefix() . $table . " on $one $operator $two";
 
         return $this;
     }
@@ -461,7 +466,7 @@ class DBBuilder
         $regx['having'] = $this->_buildHaving();
         $regx['order'] = !$this->order ? "" : " ORDER BY " . implode(' ', $this->order);
         $regx['limit'] = !$this->limit ? "" : " LIMIT " . $this->limit;
-        $regx['offset'] = !$this->offset ? "" : " OFFSET " . $this->offset;
+        $regx['offset'] = ($this->offset === false) ? "" : " OFFSET " . $this->offset;
         // insert
         $inserts = $this->_buildInsert($oper);
         $regx['insertKeys'] = $inserts['insertKeys'];
@@ -631,16 +636,18 @@ class DBBuilder
      * @param string $boolean
      * @return $this
      */
-    public function where($column, $operator = null, $value = null, $boolean = 'and')
+    public function where($column = null, $operator = null, $value = null, $boolean = 'and')
     {
-        $where = $this->_parseWhere($column, $operator, $value, $boolean);
+        if ($column) {
+            $where = $this->_parseWhere($column, $operator, $value, $boolean);
 
-        // 做一下类型处理
-        if ($where) {
-            $type = 'Basic';
-            foreach ($where as $item) {
-                list($column, $operator, $value) = [$item[0], $item[1], $item[2]];
-                $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
+            // 做一下类型处理
+            if ($where) {
+                $type = 'Basic';
+                foreach ($where as $item) {
+                    list($column, $operator, $value) = [$item[0], $item[1], $item[2]];
+                    $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
+                }
             }
         }
 
@@ -742,7 +749,7 @@ class DBBuilder
      * @param $int
      * @return $this
      */
-    public function limit($limit, $offset=0)
+    public function limit($limit, $offset = 0)
     {
         $this->limit = $limit;
 
