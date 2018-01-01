@@ -10,8 +10,7 @@
         }
     ],
     "require": {
-        "fizzday/fizzhelper": "dev-master",
-        "fizzday/facades": "dev-master"
+        "fizzday/fizzhelper": "dev-master"
     },
     "autoload": {
         "psr-4": {
