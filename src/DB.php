@@ -3,7 +3,6 @@
 namespace Fizzday\FizzDB;
 
 //use Fizzday\Facades\Facade;
-
 /**
  * Class DB
  * @package Fizzday\FizzDB
